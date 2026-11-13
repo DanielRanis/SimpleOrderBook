@@ -12,10 +12,12 @@ public:
     static constexpr int MAX_PRICE = 163;
 
     void addOrder(int orderId, int price, int quantity);
+
     void cancelOrder(int orderId);
 
     // Returns -1 when the book is empty.
     int getBestBid() const noexcept;
+
     std::size_t orderCount() const noexcept;
 
 private:
@@ -27,12 +29,11 @@ private:
     using PriceLevel = std::list<Order>;
 
     struct OrderLocation {
-        int priceIndex;
+        std::size_t priceIndex;
         PriceLevel::iterator order;
     };
 
-    static constexpr std::size_t PRICE_LEVEL_COUNT =
-        static_cast<std::size_t>(MAX_PRICE - MIN_PRICE + 1);
+    static constexpr std::size_t PRICE_LEVEL_COUNT = MAX_PRICE - MIN_PRICE + 1;
 
     static int highestSetBit(std::uint64_t bits) noexcept;
 

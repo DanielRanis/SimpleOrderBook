@@ -4,15 +4,17 @@
 #include <stdexcept>
 
 void OrderBook::addOrder(int orderId, int price, int quantity) {
+    // Validate input parameters
     if (price < MIN_PRICE || price > MAX_PRICE || quantity <= 0) {
         throw std::invalid_argument("price or quantity is outside the valid range");
     }
+    // Check for duplicate order ID
     if (orders_.find(orderId) != orders_.end()) {
         throw std::invalid_argument("duplicate order ID");
     }
 
-    const auto priceIndex = price - MIN_PRICE;
-    auto& level = levels_[static_cast<std::size_t>(priceIndex)];
+    const std::size_t priceIndex = price - MIN_PRICE;
+    auto& level = levels_[priceIndex];
     level.push_back({orderId, quantity});
     const auto order = std::prev(level.end());
 
@@ -40,14 +42,14 @@ void OrderBook::cancelOrder(int orderId) {
         return;
     }
 
-    const int priceIndex = orderIt->second.priceIndex;
-    auto& level = levels_[static_cast<std::size_t>(priceIndex)];
+    const std::size_t priceIndex = orderIt->second.priceIndex;
+    auto& level = levels_[priceIndex];
     level.erase(orderIt->second.order);
     orders_.erase(orderIt);
 
     if (level.empty()) {
         nonEmptyLevels_ &= ~(std::uint64_t{1} << priceIndex);
-        if (bestBid_ == priceIndex + MIN_PRICE) {
+        if (bestBid_ == static_cast<int>(priceIndex) + MIN_PRICE) {
             const int highestIndex = highestSetBit(nonEmptyLevels_);
             bestBid_ = highestIndex == -1 ? -1 : highestIndex + MIN_PRICE;
         }
