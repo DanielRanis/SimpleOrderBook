@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ORDER_BOOK_HPP
+#define ORDER_BOOK_HPP
 
 #include <array>
 #include <cstddef>
@@ -42,3 +43,5 @@ private:
     std::uint64_t nonEmptyLevels_ = 0;
     int bestBid_ = -1;
 };
+
+#endif

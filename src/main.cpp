@@ -14,9 +14,9 @@ int main() {
 
     book.cancelOrder(102);
     std::cout << "Best bid after cancelling order 102: "
-              << book.getBestBid() << '\n';
+            << book.getBestBid() << '\n';
 
     book.cancelOrder(103);
     std::cout << "Best bid after cancelling order 103: "
-              << book.getBestBid() << '\n';
+            << book.getBestBid() << '\n';
 }

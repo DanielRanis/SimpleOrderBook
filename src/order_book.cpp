@@ -14,13 +14,11 @@ void OrderBook::addOrder(int orderId, int price, int quantity) {
     }
 
     const std::size_t priceIndex = price - MIN_PRICE;
-    auto& level = levels_[priceIndex];
-    level.push_back({orderId, quantity});
-    const auto order = std::prev(level.end());
-
+    auto &level = levels_[priceIndex];
+    const auto order = level.emplace(level.end(), Order{.id = orderId, .quantity = quantity});
     bool inserted = false;
     try {
-        inserted = orders_.emplace(orderId, OrderLocation{priceIndex, order}).second;
+        inserted = orders_.emplace(orderId, OrderLocation{.priceIndex = priceIndex, .order = order}).second;
     } catch (...) {
         level.pop_back();
         throw;
@@ -36,14 +34,14 @@ void OrderBook::addOrder(int orderId, int price, int quantity) {
     }
 }
 
-void OrderBook::cancelOrder(int orderId) {
+void OrderBook::cancelOrder(const int orderId) {
     const auto orderIt = orders_.find(orderId);
     if (orderIt == orders_.end()) {
         return;
     }
 
     const std::size_t priceIndex = orderIt->second.priceIndex;
-    auto& level = levels_[priceIndex];
+    auto &level = levels_[priceIndex];
     level.erase(orderIt->second.order);
     orders_.erase(orderIt);
 
